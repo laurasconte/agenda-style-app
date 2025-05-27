@@ -66,7 +66,9 @@ const Agendamento = () => {
     try {
       const data = await apiBarbeiros.getAll();
       setBarbeiros(data);
+      console.log('Barbeiros carregados:', data);
     } catch (error) {
+      console.error('Erro ao carregar barbeiros:', error);
       toast({
         title: "Erro",
         description: "Não foi possível carregar os barbeiros",
@@ -79,7 +81,9 @@ const Agendamento = () => {
     try {
       const data = await apiServicos.getAll();
       setServicos(data);
+      console.log('Serviços carregados:', data);
     } catch (error) {
+      console.error('Erro ao carregar serviços:', error);
       toast({
         title: "Erro",
         description: "Não foi possível carregar os serviços",
@@ -96,7 +100,9 @@ const Agendamento = () => {
       const dateStr = format(selectedDate, "yyyy-MM-dd");
       const data = await apiHorarios.getDisponiveis(selectedBarbeiro, dateStr);
       setHorarios(data);
+      console.log('Horários carregados:', data);
     } catch (error) {
+      console.error('Erro ao carregar horários:', error);
       toast({
         title: "Erro",
         description: "Não foi possível carregar os horários",
@@ -108,6 +114,12 @@ const Agendamento = () => {
   };
 
   const handleNext = () => {
+    console.log('Tentando avançar para próximo step. Step atual:', step);
+    console.log('Barbeiro selecionado:', selectedBarbeiro);
+    console.log('Serviço selecionado:', selectedServico);
+    console.log('Data selecionada:', selectedDate);
+    console.log('Horário selecionado:', selectedTime);
+
     if (step === 1 && !selectedBarbeiro) {
       toast({
         title: "Selecione um barbeiro",
@@ -135,11 +147,23 @@ const Agendamento = () => {
       return;
     }
 
+    console.log('Avançando para step:', step + 1);
     setStep(step + 1);
   };
 
   const handlePrevious = () => {
+    console.log('Voltando para step:', step - 1);
     setStep(step - 1);
+  };
+
+  const handleSelectBarbeiro = (id: number) => {
+    console.log('Barbeiro selecionado:', id);
+    setSelectedBarbeiro(id);
+  };
+
+  const handleSelectServico = (id: number) => {
+    console.log('Serviço selecionado:', id);
+    setSelectedServico(id);
   };
 
   const handleSubmit = async () => {
@@ -164,6 +188,7 @@ const Agendamento = () => {
         clienteEmail: clienteData.email
       };
 
+      console.log('Enviando agendamento:', agendamento);
       await apiAgendamentos.criar(agendamento);
       
       toast({
@@ -181,6 +206,7 @@ const Agendamento = () => {
         } 
       });
     } catch (error) {
+      console.error('Erro no agendamento:', error);
       toast({
         title: "Erro no agendamento",
         description: "Ocorreu um erro. Tente novamente.",
@@ -247,7 +273,7 @@ const Agendamento = () => {
                     key={barbeiro.id}
                     {...barbeiro}
                     isSelected={selectedBarbeiro === barbeiro.id}
-                    onSelect={setSelectedBarbeiro}
+                    onSelect={handleSelectBarbeiro}
                   />
                 ))}
               </div>
@@ -261,7 +287,7 @@ const Agendamento = () => {
                     key={servico.id}
                     {...servico}
                     isSelected={selectedServico === servico.id}
-                    onSelect={setSelectedServico}
+                    onSelect={handleSelectServico}
                   />
                 ))}
               </div>
