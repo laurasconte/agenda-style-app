@@ -29,7 +29,7 @@ const AdminAgendamentos = () => {
   const [filters, setFilters] = useState({
     barbeiro: "",
     data: "",
-    status: "",
+    status: "todos",
     cliente: ""
   });
 
@@ -40,7 +40,11 @@ const AdminAgendamentos = () => {
   const loadAgendamentos = async () => {
     setLoading(true);
     try {
-      const data = await adminApi.getAgendamentos(filters);
+      const filterParams = {
+        ...filters,
+        status: filters.status === "todos" ? "" : filters.status
+      };
+      const data = await adminApi.getAgendamentos(filterParams);
       setAgendamentos(data);
     } catch (error) {
       toast({
@@ -166,7 +170,7 @@ const AdminAgendamentos = () => {
                     <SelectValue placeholder="Todos os status" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">Todos</SelectItem>
+                    <SelectItem value="todos">Todos</SelectItem>
                     <SelectItem value="confirmado">Confirmado</SelectItem>
                     <SelectItem value="concluido">Concluído</SelectItem>
                     <SelectItem value="cancelado">Cancelado</SelectItem>
@@ -177,7 +181,7 @@ const AdminAgendamentos = () => {
             
             <div className="mt-4">
               <Button 
-                onClick={() => setFilters({barbeiro: "", data: "", status: "", cliente: ""})}
+                onClick={() => setFilters({barbeiro: "", data: "", status: "todos", cliente: ""})}
                 variant="outline"
               >
                 Limpar Filtros
